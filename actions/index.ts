@@ -92,7 +92,7 @@ export async function getCartItems() {
 		return null;
 	}
 	try {
-		return await db.select().from(cartItems).innerJoin(products, eq(cartItems.productId, products.id)).innerJoin(brands,eq(brands.id,products.brandId)).innerJoin(categories,eq(categories.id,products.categoryId)).where(eq(cartItems.userId, session.user.id));
+		return await db.select().from(cartItems).innerJoin(products, eq(cartItems.productId, products.id)).innerJoin(brands, eq(brands.id, products.brandId)).innerJoin(categories, eq(categories.id, products.categoryId)).where(eq(cartItems.userId, session.user.id));
 
 	} catch (e) {
 		console.log(`Error in fetching cart`);
@@ -153,17 +153,17 @@ export async function decrementQty(productID: string) {
 	}
 	try {
 		const prev = await db.query.cartItems.findFirst({
-			where: eq(cartItems.productId, productID)
+			where: and(eq(cartItems.productId, productID), eq(cartItems.userId, session.user.id))
 		});
 		if (!prev) {
 			throw new Error('No previous column was found');
 		}
 		if (prev.quantity <= 1) {
-			const res = await db.delete(cartItems).where(eq(cartItems.productId, productID)).returning();
+			const res = await db.delete(cartItems).where(and(eq(cartItems.productId, productID), eq(cartItems.userId, session.user.id))).returning();
 			revalidatePath('/cart');
 			return res;
 		}
-		const res = await db.update(cartItems).set({quantity: prev?.quantity - 1}).where(eq(cartItems.productId, productID)).returning();
+		const res = await db.update(cartItems).set({quantity: prev?.quantity - 1}).where(and(eq(cartItems.productId, productID), eq(cartItems.userId, session.user.id))).returning();
 		console.log('decreased cart item', {res})
 		revalidatePath('/cart');
 		return res;
