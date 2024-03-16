@@ -3,8 +3,21 @@ import CartItem from "@/components/ui/CartItem";
 import {Button} from "@/components/ui/button";
 import {getCartItems} from "@/actions";
 import Checkout from "@/components/Checkout";
+import {auth} from "@/auth";
+import Link from "next/link";
 
 const Page = async () => {
+	const session = await auth();
+	if (!session || !session?.user) {
+		return (<main className={'p-10'}>
+			<pre>You are not logged in</pre>
+			<Button variant={'outline'}>
+				<Link href={'/api/auth/signin'}>
+					Login
+				</Link>
+			</Button>
+		</main>);
+	}
 	const cartItems = await getCartItems();
 	return (
 		<main className={'p-10'}>
