@@ -1,4 +1,5 @@
-import NextAuth, {NextAuthConfig} from "next-auth"
+import NextAuth from "next-auth"
+import {NextAuthConfig} from "next-auth";
 import Google from "next-auth/providers/google";
 import {DrizzleAdapter} from "@auth/drizzle-adapter";
 import {db} from "@/db/connection";
@@ -20,6 +21,7 @@ const authConfig =
 	} satisfies NextAuthConfig;
 
 export const {
-	handlers:{GET,POST},
+	handlers: {GET, POST},
 	auth,
+	//@ts-ignore
 } = NextAuth(authConfig);
