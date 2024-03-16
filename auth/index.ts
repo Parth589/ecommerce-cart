@@ -21,7 +21,7 @@ const authConfig =
 	} satisfies NextAuthConfig;
 
 export const {
-	handlers: {GET, POST},
+	handlers:{GET,POST},
 	auth,
-	//@ts-ignore
+// 	@ts-ignore
 } = NextAuth(authConfig);
