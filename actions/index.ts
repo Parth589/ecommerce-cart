@@ -107,7 +107,7 @@ export async function insertItemsToCart(productId: string) {
 	}
 	try {
 		const conflictingRow = await db.query.cartItems.findFirst({
-			where: eq(cartItems.productId, productId)
+			where: and(eq(cartItems.productId, productId), eq(cartItems.userId, session.user.id))
 		});
 		const res = await db.insert(cartItems).values({
 			userId: session.user.id,
