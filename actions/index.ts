@@ -109,16 +109,20 @@ export async function insertItemsToCart(productId: string) {
 		const conflictingRow = await db.query.cartItems.findFirst({
 			where: and(eq(cartItems.productId, productId), eq(cartItems.userId, session.user.id))
 		});
-		const res = await db.insert(cartItems).values({
-			userId: session.user.id,
-			productId: productId,
-			quantity: 1
-		}).onConflictDoUpdate({
-			target: cartItems.productId,
-			set: {
-				quantity: (Number(conflictingRow?.quantity) || 0) + 1
-			}
-		}).returning();
+		let res = null;
+		if (!conflictingRow) {
+			res = await db.insert(cartItems)
+			.values({
+				userId: session.user.id,
+				productId: productId,
+				quantity: 1
+			}).returning();
+		} else {
+			res = await db.update(cartItems)
+			.set({quantity: conflictingRow.quantity + 1})
+			.where(and(eq(cartItems.productId, productId), eq(cartItems.userId, session.user.id)))
+			.returning();
+		}
 		console.log('inserted cart item', {res})
 		revalidatePath('/cart');
 		return res;

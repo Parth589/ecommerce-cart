@@ -99,7 +99,7 @@ export const cartItems = pgTable('cartItems', {
 	.references(() => users.id, {onDelete: 'cascade'}),
 	productId: uuid('productId')
 	.notNull()
-	.references(() => products.id, {onDelete: 'cascade'}).unique(),
+	.references(() => products.id, {onDelete: 'cascade'}),
 	quantity: integer('quantity').notNull(),
 });
 
