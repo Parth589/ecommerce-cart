@@ -1,4 +1,3 @@
-import {Input} from "@/components/ui/input";
 import ProductCard from "@/components/ui/ProductCard";
 import {getProducts} from "@/actions";
 import ClientPagination from "@/components/ui/ClientPagination";

@@ -1,13 +1,11 @@
 import {HoverCard, HoverCardContent, HoverCardTrigger} from "@/components/ui/hover-card";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import FallBackAvatar from "@/public/angryimg.png";
-// @ts-ignore
-import {session} from "@auth/core/lib/actions";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import Image from "next/image";
-
-const UserAvatar = ({session}: { session: session }) => {
+import {Session} from "next-auth";
+const UserAvatar = ({session}: { session: Session }) => {
 	return (
 		<HoverCard>
 			<HoverCardTrigger>

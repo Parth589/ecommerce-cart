@@ -3,7 +3,6 @@ import {Input} from "@/components/ui/input";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {useCallback, useRef} from "react";
-import Link from "next/link";
 
 const Search = () => {
 	const searchParams = useSearchParams();
@@ -24,8 +23,7 @@ const Search = () => {
 	return (
 		<form onSubmit={(e)=>{e.preventDefault()}}>
 			<div className={'flex gap-4 max-w-7xl mx-auto'}>
-				<Input onChange={(e) => {
-				}} ref={inputRef} placeholder={'Search here'}/>
+				<Input ref={inputRef} placeholder={'Search here'}/>
 				<Button type={'submit'} onClick={() => {
 					// @ts-ignore
 					if (searchParams.get('search') !== inputRef?.current?.value)

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import RemoveFromCart from "@/components/RemoveFromCart";
 import QuantityChanger from "@/components/QuantityChanger";
-import {products} from "@/db/schema";
 
 const CartItem = ({product}: {
 	product: {

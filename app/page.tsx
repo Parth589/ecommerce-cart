@@ -1,6 +1,4 @@
 import {Button} from "@/components/ui/button";
-import {ToggleTheme} from "@/components/ui/ToggleTheme"
-import {NavBar} from "@/components/ui/NavBar";
 import Link from "next/link";
 
 export default function Home() {

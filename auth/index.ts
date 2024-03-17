@@ -17,7 +17,8 @@ const authConfig =
 				if (!session) return;
 				session.user.id = user.id;
 			}
-		}
+		},
+		trustHost:true
 	} satisfies NextAuthConfig;
 
 export const {

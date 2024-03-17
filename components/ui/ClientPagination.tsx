@@ -11,7 +11,7 @@ import {Button} from "@/components/ui/button";
 import Link from "next/link";
 
 const ClientPagination = ({disableNext}:{disableNext:boolean}) => {
-	const router = useRouter();
+	useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const page = Number(searchParams.get('page'));

@@ -1,7 +1,7 @@
 'use server';
 import {eq, ilike, or, and} from 'drizzle-orm';
 import {db} from '@/db/connection';
-import {brands, cartItems, categories, products, reviews, users} from '@/db/schema';
+import {brands, cartItems, categories, products, reviews} from '@/db/schema';
 import {avg} from "drizzle-orm/sql/functions/aggregate";
 import {auth} from "@/auth";
 import {revalidatePath} from "next/cache";

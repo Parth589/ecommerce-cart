@@ -1,7 +1,6 @@
 import React from 'react';
 import Image from "next/image";
-import {Button} from "@/components/ui/button";
-import {getProductDetails, insertItemsToCart} from "@/actions";
+import {getProductDetails} from "@/actions";
 import {notFound} from "next/navigation";
 import AddToCart from "@/components/AddToCart";
 
