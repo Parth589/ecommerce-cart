@@ -5,7 +5,8 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import Image from "next/image";
 import {Session} from "next-auth";
-const UserAvatar = ({session}: { session: Session }) => {
+
+const UserAvatar = ({session}: { session: Session | null }) => {
 	return (
 		<HoverCard>
 			<HoverCardTrigger>
