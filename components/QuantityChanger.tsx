@@ -10,9 +10,9 @@ const QuantityChanger = ({quantity, productID}: { quantity: number, productID: s
 	return (
 		<div className="flex items-center gap-2">
 			<Button size="icon" variant="outline" onClick={async () => {
-				const res = await decrementQty(productID);
-				if (res === null) {
-					toast({title: 'Error removing item'});
+				const {success, message} = await decrementQty(productID);
+				if (!success) {
+					toast({title: message || 'Error removing item'});
 				}
 			}}>
 				<MinusIcon className="w-4 h-4"/>
@@ -21,9 +21,9 @@ const QuantityChanger = ({quantity, productID}: { quantity: number, productID: s
 			<span className={'mx-3 block'}>{quantity}</span>
 			<Button size="icon" variant="outline"
 			        onClick={async () => {
-				        const res = await insertItemsToCart(productID);
-				        if (res === null) {
-					        toast({title: 'Error removing item'});
+				        const {success, message} = await insertItemsToCart(productID);
+				        if (!success) {
+					        toast({title: message || 'Error adding item'});
 				        }
 			        }}>
 				<PlusIcon className="w-4 h-4"/>

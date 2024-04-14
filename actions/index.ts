@@ -11,7 +11,7 @@ export async function getProducts(pageNo: number, searchTerm?: string) {
 	console.log({offset});
 	try {
 		if (searchTerm) {
-			return await db.select({
+			const res = await db.select({
 				id: products.id,
 				price: products.price,
 				name: products.name,
@@ -28,21 +28,13 @@ export async function getProducts(pageNo: number, searchTerm?: string) {
 					ilike(brands.name, `%${searchTerm}%`),
 				)
 			).limit(10).offset(offset);
+			return {success: true, data: res, message: null};
 		}
-
-		// return db.query.products.findMany({
-		// 	columns: {
-		// 		name: true,
-		// 		id: true,
-		// 		image: true,
-		// 		price: true
-		// 	},
-		// 	limit: 10,
-		// 	offset: offset
-		// });
-		return db.select().from(products).limit(10).offset(offset);
+		const res = await db.select().from(products).limit(10).offset(offset);
+		return {success: true, data: res, message: null};
 	} catch (e) {
 		console.log(`Error in retrieving products`, e);
+		return {success: false, message: 'Unexpected Error', data: null};
 	}
 }
 
@@ -51,11 +43,13 @@ export async function getProductDetails(productId: string) {
 		console.log({productId})
 		const uuidRegEx = new RegExp('^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$')
 		if (!uuidRegEx.test(productId)) {
-			throw new Error(`Invalid UUID ${productId}`)
+			return {success: false, message: 'Invalid Product ID', data: null};
 		}
-		return await db.select().from(products).innerJoin(brands, eq(brands.id, products.brandId)).innerJoin(categories, eq(categories.id, products.categoryId)).where(eq(products.id, productId));
+		const res = await db.select().from(products).innerJoin(brands, eq(brands.id, products.brandId)).innerJoin(categories, eq(categories.id, products.categoryId)).where(eq(products.id, productId));
+		return {success: true, data: res, message: null};
 	} catch (e) {
 		console.log(`Error in getting details for product with id ${productId}`, e)
+		return {success: false, message: 'Unexpected Error', data: null};
 	}
 }
 
@@ -89,13 +83,14 @@ export async function getCartItems() {
 	const session = await auth();
 	if (!(session?.user)) {
 		console.log('unauthorized user');
-		return null;
+		return {success: false, message: 'You are not logged in', data: null};
 	}
 	try {
-		return await db.select().from(cartItems).innerJoin(products, eq(cartItems.productId, products.id)).innerJoin(brands, eq(brands.id, products.brandId)).innerJoin(categories, eq(categories.id, products.categoryId)).where(eq(cartItems.userId, session.user.id));
-
+		const res = await db.select().from(cartItems).innerJoin(products, eq(cartItems.productId, products.id)).innerJoin(brands, eq(brands.id, products.brandId)).innerJoin(categories, eq(categories.id, products.categoryId)).where(eq(cartItems.userId, session.user.id));
+		return {success: true, data: res, message: null};
 	} catch (e) {
 		console.log(`Error in fetching cart`);
+		return {success: false, message: 'Unexpected Error', data: null};
 	}
 }
 
@@ -103,13 +98,13 @@ export async function insertItemsToCart(productId: string) {
 	const session = await auth();
 	if (!(session?.user)) {
 		console.log('unauthorized user');
-		return null;
+		return {success: false, message: 'You are not logged in', data: null};
 	}
 	try {
 		const conflictingRow = await db.query.cartItems.findFirst({
 			where: and(eq(cartItems.productId, productId), eq(cartItems.userId, session.user.id))
 		});
-		let res = null;
+		let res;
 		if (!conflictingRow) {
 			res = await db.insert(cartItems)
 			.values({
@@ -125,10 +120,10 @@ export async function insertItemsToCart(productId: string) {
 		}
 		console.log('inserted cart item', {res})
 		revalidatePath('/cart');
-		return res;
+		return {success: true, data: res, message: null};
 	} catch (e) {
 		console.log(`Error in adding items to cart`, e);
-		return null;
+		return {success: false, message: 'Unexpected Error', data: null};
 	}
 }
 
@@ -136,16 +131,16 @@ export async function removeItemFromCart(productID: string) {
 	const session = await auth();
 	if (!(session?.user)) {
 		console.log('unauthorized user');
-		return null;
+		return {success: false, message: 'You are not logged in', data: null};
 	}
 	try {
 		const res = await db.delete(cartItems).where(and(eq(cartItems.productId, productID), eq(cartItems.userId, session.user.id))).returning();
 		console.log('removed cart item', {res})
 		revalidatePath('/cart');
-		return res;
+		return {success: true, data: res, message: null};
 	} catch (e) {
 		console.log(`Error in removing items to cart`, e);
-		return null;
+		return {success: false, message: 'Unexpected Error', data: null};
 	}
 }
 
@@ -153,7 +148,7 @@ export async function decrementQty(productID: string) {
 	const session = await auth();
 	if (!(session?.user)) {
 		console.log('unauthorized user');
-		return null;
+		return {success: false, message: 'You are not logged in', data: null};
 	}
 	try {
 		const prev = await db.query.cartItems.findFirst({
@@ -165,14 +160,14 @@ export async function decrementQty(productID: string) {
 		if (prev.quantity <= 1) {
 			const res = await db.delete(cartItems).where(and(eq(cartItems.productId, productID), eq(cartItems.userId, session.user.id))).returning();
 			revalidatePath('/cart');
-			return res;
+			return {success: true, data: res, message: null};
 		}
 		const res = await db.update(cartItems).set({quantity: prev?.quantity - 1}).where(and(eq(cartItems.productId, productID), eq(cartItems.userId, session.user.id))).returning();
 		console.log('decreased cart item', {res})
 		revalidatePath('/cart');
-		return res;
+		return {success: true, data: res, message: null};
 	} catch (e) {
 		console.log(`Error in removing items to cart`, e);
-		return null;
+		return {success: false, message: 'Unexpected Error', data: null};
 	}
 }

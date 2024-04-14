@@ -16,8 +16,10 @@ const dummyProduct = {
 
 const Page = async ({params}: { params: { id: string } }) => {
 	try {
-		const product = (await getProductDetails(params.id))?.[0];
-		if (!product) throw new Error('product not found')
+		// const product = (await getProductDetails(params.id))?.[0];
+		const {success, data, message} = await getProductDetails(params.id);
+		if (!success) throw new Error(message || 'product not found')
+		const product = data?.[0]
 		return (
 			<main className={'p-10 w-full flex justify-center items-center'}>
 				<div className={'gap-7 grid md:grid-cols-2'}>

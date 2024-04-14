@@ -35,11 +35,11 @@ const RemoveFromCart = ({productID}: { productID: string }) => {
 				<AlertDialogFooter>
 					<AlertDialogCancel>Cancel</AlertDialogCancel>
 					<AlertDialogAction onClick={async () => {
-						const res = await removeItemFromCart(productID);
-						if (res !== null) {
+						const {success, message} = await removeItemFromCart(productID);
+						if (success) {
 							toast({title: 'Removed Item form Cart'})
 						} else {
-							toast({title: 'we\'re Having Error removing cart item'})
+							toast({title: message || 'we\'re Having Error removing cart item'})
 						}
 					}}>Continue</AlertDialogAction>
 				</AlertDialogFooter>

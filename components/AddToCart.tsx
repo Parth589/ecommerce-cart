@@ -8,15 +8,15 @@ export default ({productID}: { productID: string }) => {
 	return (
 		<>
 			<Button onClick={async () => {
-				const res = await insertItemsToCart(productID);
-				if (res !== null) {
+				const {success, message} = await insertItemsToCart(productID);
+				if (success) {
 					// setShowToast(true);
 					toast({
 						title: 'Added item to Cart'
 					})
-				}else{
+				} else {
 					toast({
-						title: 'We\'re having error adding item to Cart'
+						title: message || 'Something Unexpected occurred.'
 					})
 				}
 			}}>Add to Cart</Button>

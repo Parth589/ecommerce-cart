@@ -1,24 +1,15 @@
 import {CardContent, CardDescription, CardTitle} from "@/components/ui/card";
 import CartItem from "@/components/ui/CartItem";
-import {Button} from "@/components/ui/button";
 import {getCartItems} from "@/actions";
 import Checkout from "@/components/Checkout";
-import {auth} from "@/auth";
-import Link from "next/link";
 
 const Page = async () => {
-	const session = await auth();
-	if (!session || !session?.user) {
+	const {success, data: cartItems, message} = await getCartItems();
+	if (!success) {
 		return (<main className={'p-10'}>
-			<pre>You are not logged in</pre>
-			<Button variant={'outline'}>
-				<Link href={'/api/auth/signin'}>
-					Login
-				</Link>
-			</Button>
+			<pre>{message}</pre>
 		</main>);
 	}
-	const cartItems = await getCartItems();
 	return (
 		<main className={'p-10'}>
 			<div className={'flex flex-col max-w-5xl mx-auto'}>
